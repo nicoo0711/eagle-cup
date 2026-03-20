@@ -330,7 +330,7 @@
   }
   .hole-card:active { border-color: var(--gold); }
   .hole-img-wrap {
-    background: #e8f0e8;
+    background: transparent;
     display: flex; align-items: center; justify-content: center;
     padding: 8px 4px 0;
     height: 140px; overflow: hidden;
@@ -587,10 +587,6 @@
         <option value="B">Team Rot (Kapitän: Philipp Hannemann)</option>
       </select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Team-Code (4 Ziffern)</label>
-      <input type="text" class="form-input" id="login-code" placeholder="z.B. 2025" maxlength="4" inputmode="numeric">
-    </div>
     <button class="btn-primary" id="login-btn" onclick="doLogin()">Einloggen ⛳</button>
     <div style="text-align:center;margin-top:16px">
       <a href="#" onclick="demoMode()" style="color:var(--muted);font-size:13px;text-decoration:none">Demo-Modus (ohne Supabase)</a>
@@ -656,10 +652,14 @@
 
   <!-- ── KURS TAB ── -->
   <div class="tab-content" id="tab-kurs">
+    <div style="display:flex;gap:8px;padding:12px 16px 0">
+      <button id="btn-course-lich" onclick="switchCourse('lich')" style="flex:1;padding:8px;border-radius:10px;border:2px solid var(--gold);background:var(--gold);color:#000;font-weight:700;font-size:13px;cursor:pointer">Licher GC</button>
+      <button id="btn-course-win" onclick="switchCourse('win')" style="flex:1;padding:8px;border-radius:10px;border:2px solid var(--gold);background:transparent;color:var(--gold);font-weight:700;font-size:13px;cursor:pointer">Golf-Park Winnerod</button>
+    </div>
     <div class="course-header">
-      <div class="course-name">Licher Golf-Club</div>
-      <div class="course-meta">Fürstliches Hofgut Kolnhausen · Lich, Hessen</div>
-      <div class="course-desc">Abwechslungsreicher Kurs in beeindruckender Naturlandschaft – ca. 35 Min. von Frankfurt.</div>
+      <div class="course-name" id="course-name">Licher Golf-Club</div>
+      <div class="course-meta" id="course-meta">Fürstliches Hofgut Kolnhausen · Lich, Hessen</div>
+      <div class="course-desc" id="course-desc">Abwechslungsreicher Kurs in beeindruckender Naturlandschaft – ca. 35 Min. von Frankfurt.</div>
       <div class="course-stats">
         <div class="course-stat"><div class="course-stat-val">18</div><div class="course-stat-lbl">Löcher</div></div>
         <div class="course-stat"><div class="course-stat-val" id="stat-par">72</div><div class="course-stat-lbl">Par</div></div>
@@ -797,27 +797,80 @@ const demoMatches = [
 ];
 
 // Kursdaten – Licher Golf-Club Fürstliches Hofgut Kolnhausen (weiße Abschläge)
-const BASE = 'https://licher-golf-club.de/wp-content/uploads/2020/11/';
+const BASE = 'licher/';
 const courseHoles = [
-  {n:1,  par:5, yards:512, idx:1,  img:'Bahn-01-520x1024.png'},
-  {n:2,  par:4, yards:429, idx:3,  img:'Bahn-02-394x1024.png'},
-  {n:3,  par:3, yards:173, idx:17, img:'Bahn-03-388x1024.png'},
-  {n:4,  par:5, yards:491, idx:15, img:'Bahn-04-361x1024.png'},
-  {n:5,  par:3, yards:196, idx:11, img:'Bahn-05-417x1024.png'},
-  {n:6,  par:4, yards:352, idx:9,  img:'Bahn-06-501x1024.png'},
-  {n:7,  par:4, yards:443, idx:5,  img:'Bahn-07-535x1024.png'},
-  {n:8,  par:3, yards:186, idx:13, img:'Bahn-08-419x1024.png'},
-  {n:9,  par:5, yards:475, idx:7,  img:'Bahn-09-508x1024.png'},
-  {n:10, par:5, yards:492, idx:2,  img:'Bahn-10-410x1024.png'},
-  {n:11, par:3, yards:169, idx:14, img:'Bahn-11-1-423x1024.png'},
-  {n:12, par:4, yards:400, idx:6,  img:'Bahn-12-418x1024.png'},
-  {n:13, par:3, yards:201, idx:16, img:'Bahn-13-1-424x1024.png'},
-  {n:14, par:5, yards:481, idx:8,  img:'Bahn-14-478x1024.png'},
-  {n:15, par:4, yards:362, idx:10, img:'Bahn-15-428x1024.png'},
-  {n:16, par:4, yards:327, idx:12, img:'Bahn-16-399x1024.png'},
-  {n:17, par:5, yards:493, idx:4,  img:'Bahn-17-360x1024.png'},
-  {n:18, par:3, yards:175, idx:18, img:'Bahn-18-461x1024.png'},
+  {n:1,  par:5, yards:512, idx:1,  img:'loch01.png'},
+  {n:2,  par:4, yards:429, idx:3,  img:'loch02.png'},
+  {n:3,  par:3, yards:173, idx:17, img:'loch03.png'},
+  {n:4,  par:5, yards:491, idx:15, img:'loch04.png'},
+  {n:5,  par:3, yards:196, idx:11, img:'loch05.png'},
+  {n:6,  par:4, yards:352, idx:9,  img:'loch06.png'},
+  {n:7,  par:4, yards:443, idx:5,  img:'loch07.png'},
+  {n:8,  par:3, yards:186, idx:13, img:'loch08.png'},
+  {n:9,  par:5, yards:475, idx:7,  img:'loch09.png'},
+  {n:10, par:5, yards:492, idx:2,  img:'loch10.png'},
+  {n:11, par:3, yards:169, idx:14, img:'loch11.png'},
+  {n:12, par:4, yards:400, idx:6,  img:'loch12.png'},
+  {n:13, par:3, yards:201, idx:16, img:'loch13.png'},
+  {n:14, par:5, yards:481, idx:8,  img:'loch14.png'},
+  {n:15, par:4, yards:362, idx:10, img:'loch15.png'},
+  {n:16, par:4, yards:327, idx:12, img:'loch16.png'},
+  {n:17, par:5, yards:493, idx:4,  img:'loch17.png'},
+  {n:18, par:3, yards:175, idx:18, img:'loch18.png'},
 ];
+
+// Kursdaten – Golf-Park Winnerod (blaue Abschläge)
+const winnerodHoles = [
+  {n:1,  par:4, yards:313, idx:3,  img:'loch01.png'},
+  {n:2,  par:3, yards:159, idx:13, img:'loch02.png'},
+  {n:3,  par:4, yards:372, idx:1,  img:'loch03.png'},
+  {n:4,  par:5, yards:444, idx:9,  img:'loch04.png'},
+  {n:5,  par:4, yards:321, idx:11, img:'loch05.png'},
+  {n:6,  par:4, yards:277, idx:15, img:'loch06.png'},
+  {n:7,  par:4, yards:367, idx:5,  img:'loch07.png'},
+  {n:8,  par:3, yards:129, idx:17, img:'loch08.png'},
+  {n:9,  par:5, yards:465, idx:7,  img:'loch09.png'},
+  {n:10, par:5, yards:427, idx:10, img:'loch10.png'},
+  {n:11, par:4, yards:386, idx:2,  img:'loch11.png'},
+  {n:12, par:4, yards:282, idx:16, img:'loch12.png'},
+  {n:13, par:3, yards:181, idx:14, img:'loch13.png'},
+  {n:14, par:4, yards:371, idx:4,  img:'loch14.png'},
+  {n:15, par:3, yards:157, idx:18, img:'loch15.png'},
+  {n:16, par:5, yards:431, idx:12, img:'loch16.png'},
+  {n:17, par:4, yards:354, idx:6,  img:'loch17.png'},
+  {n:18, par:4, yards:327, idx:8,  img:'loch18.png'},
+];
+
+const courses = {
+  lich: {
+    holes: courseHoles,
+    base: BASE,
+    name: 'Licher Golf-Club',
+    meta: 'Fürstliches Hofgut Kolnhausen · Lich, Hessen',
+    desc: 'Abwechslungsreicher Kurs in beeindruckender Naturlandschaft – ca. 35 Min. von Frankfurt.',
+  },
+  win: {
+    holes: winnerodHoles,
+    base: 'winnerod/',
+    name: 'Golf-Park Winnerod',
+    meta: 'Parkstraße 22 · 35447 Reiskirchen, Hessen',
+    desc: '18-Loch-Anlage in Mittelhessen mit abwechslungsreichen Bahnen und natürlicher Landschaft.',
+  },
+};
+let activeCourse = 'lich';
+
+function switchCourse(key) {
+  activeCourse = key;
+  const c = courses[key];
+  document.getElementById('course-name').textContent = c.name;
+  document.getElementById('course-meta').textContent = c.meta;
+  document.getElementById('course-desc').textContent = c.desc;
+  document.getElementById('btn-course-lich').style.background = key === 'lich' ? 'var(--gold)' : 'transparent';
+  document.getElementById('btn-course-lich').style.color    = key === 'lich' ? '#000' : 'var(--gold)';
+  document.getElementById('btn-course-win').style.background = key === 'win' ? 'var(--gold)' : 'transparent';
+  document.getElementById('btn-course-win').style.color    = key === 'win' ? '#000' : 'var(--gold)';
+  renderCourse();
+}
 
 // ── INIT ──
 window.addEventListener('DOMContentLoaded', () => {
@@ -838,12 +891,7 @@ function demoMode() {
 async function doLogin() {
   const name = document.getElementById('login-name').value.trim();
   const team = document.getElementById('login-team').value;
-  const code = document.getElementById('login-code').value.trim();
-
-  if (!name || !team || !code) { showToast('Bitte alle Felder ausfüllen', 'error'); return; }
-
-  const expectedCode = team === 'A' ? TEAM_CODE_A : TEAM_CODE_B;
-  if (code !== expectedCode) { showToast('Falscher Team-Code!', 'error'); return; }
+  if (!name || !team) { showToast('Bitte alle Felder ausfüllen', 'error'); return; }
 
   currentUser = { name, team };
 
@@ -1098,13 +1146,15 @@ function updateTotals() {
 function renderCourse() {
   let totalPar = 0, totalYards = 0;
   const grid = document.getElementById('hole-grid');
-  grid.innerHTML = courseHoles.map(h => {
+  const c = courses[activeCourse];
+  grid.innerHTML = c.holes.map(h => {
     totalPar += h.par; totalYards += h.yards;
     const cls = h.par===3?'par3':h.par===4?'par4':'par5';
+    const imgHtml = c.base && h.img
+      ? `<div class="hole-img-wrap"><img src="${c.base}${h.img}" alt="Loch ${h.n}" loading="lazy"></div>`
+      : '';
     return `<div class="hole-card" onclick="openHoleZoom(${h.n})" style="cursor:pointer">
-      <div class="hole-img-wrap">
-        <img src="${BASE}${h.img}" alt="Loch ${h.n}" loading="lazy">
-      </div>
+      ${imgHtml}
       <div class="hole-info">
         <div class="hole-num">Loch ${h.n} · Hdcp ${h.idx}</div>
         <div class="hole-par ${cls}">Par ${h.par}</div>
@@ -1337,10 +1387,18 @@ async function createMatch() {
 
 // ── HOLE ZOOM ──
 function openHoleZoom(n) {
-  const h = courseHoles.find(h => h.n === n);
+  const c = courses[activeCourse];
+  const h = c.holes.find(h => h.n === n);
   if (!h) return;
   const cls = h.par===3?'Par 3':h.par===4?'Par 4':'Par 5';
-  document.getElementById('hole-zoom-img').src = BASE + h.img;
+  const imgEl = document.getElementById('hole-zoom-img');
+  if (c.base && h.img) {
+    imgEl.src = c.base + h.img;
+    imgEl.style.display = '';
+  } else {
+    imgEl.src = '';
+    imgEl.style.display = 'none';
+  }
   document.getElementById('hole-zoom-title').textContent = `Loch ${h.n} · ${cls}`;
   document.getElementById('hole-zoom-sub').textContent = `${h.yards} m · Handicap ${h.idx}`;
   document.getElementById('modal-hole').classList.add('open');
