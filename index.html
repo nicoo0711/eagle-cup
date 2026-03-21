@@ -1188,9 +1188,8 @@ function openScoreModal(matchId) {
   const canEdit = isMatchPlayer(match);
   renderHoleEntries(match, canEdit);
 
-  // Save-Button + Löschen-Link nur für Spieler sichtbar
-  document.querySelector('#modal-score .btn-save').style.display = canEdit ? '' : 'none';
-  document.querySelector('#modal-score .modal-footer .btn-secondary').textContent = canEdit ? 'Abbrechen' : 'Schließen';
+  // Löschen-Link nur für Spieler sichtbar
+  document.querySelector('#modal-score .modal-footer .btn-secondary').textContent = 'Schließen';
   document.getElementById('modal-delete-link').style.display = canEdit ? '' : 'none';
 
   if (!canEdit) {
