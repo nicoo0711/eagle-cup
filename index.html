@@ -718,13 +718,10 @@
           <option value="Singles">Singles</option>
         </select>
       </div>
-      <div class="form-group">
-        <label class="form-label">Löcher</label>
-        <div style="display:flex;gap:8px">
-          <button type="button" class="holes-btn active" id="holes-18"  onclick="setHolesMode('18')"     style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--team-a-accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;">18 Loch</button>
-          <button type="button" class="holes-btn"        id="holes-f9"  onclick="setHolesMode('front9')" style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;">Front 9</button>
-          <button type="button" class="holes-btn"        id="holes-b9"  onclick="setHolesMode('back9')"  style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;">Back 9</button>
-        </div>
+      <div style="display:none">
+        <button type="button" id="holes-18"></button>
+        <button type="button" id="holes-f9"></button>
+        <button type="button" id="holes-b9"></button>
       </div>
       <div class="form-group">
         <label class="form-label" style="color:var(--team-a-accent)">Team Blau – Spieler wählen</label>
