@@ -566,7 +566,7 @@
 
     <div class="form-group">
       <label class="form-label">Dein Name</label>
-      <input type="text" class="form-input" id="login-name" placeholder="z.B. Tim Ziegelmeier" autocomplete="given-name" list="players-list">
+      <input type="text" class="form-input" id="login-name" placeholder="z.B. Tim Ziegelmeier" autocomplete="given-name" list="players-list" oninput="autoSelectTeam()">
       <datalist id="players-list">
         <option value="Tim Ziegelmeier">
         <option value="Maurits Gümmer">
@@ -712,9 +712,9 @@
     <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
       <div class="form-group">
         <label class="form-label">Format</label>
-        <select class="form-select" id="new-format" onchange="updatePickerHints()">
-          <option value="Foursomes">Foursomes</option>
-          <option value="Four-Ball">Four-Ball</option>
+        <select class="form-select" id="new-format" onchange="onFormatChange()">
+          <option value="Foursomes" class="lich-only">Foursomes</option>
+          <option value="Four-Ball" class="lich-only">Four-Ball</option>
           <option value="Singles">Singles</option>
         </select>
       </div>
@@ -790,14 +790,7 @@ let holeScores = {};
 let allMatches = [];
 
 // Demo-Daten
-const demoMatches = [
-  { id: '1', format: 'Foursomes', players_a: 'Nicolas Hannemann, Maximilian Kolitsch', players_b: 'Philipp Hannemann, Lorenz Merz',
-    scores: {'1':'A','2':'H','3':'B','4':'A','5':'A'}, status: 'live', pts_a: 0, pts_b: 0 },
-  { id: '2', format: 'Four-Ball', players_a: 'Florian Gümmer, Frederik Fink', players_b: 'Maurits Gümmer, Tim Ziegelmeier',
-    scores: {}, status: 'todo', pts_a: 0, pts_b: 0 },
-  { id: '3', format: 'Singles', players_a: 'Oskar Daume', players_b: 'Raik Riechers',
-    scores: {}, status: 'todo', pts_a: 0, pts_b: 0 }
-];
+const demoMatches = [];
 
 // Kursdaten – Licher Golf-Club Fürstliches Hofgut Kolnhausen (weiße Abschläge)
 const BASE = 'licher/';
@@ -889,6 +882,13 @@ function demoMode() {
   demoData = true;
   currentUser = { name: 'Demo User', team: 'A' };
   startApp();
+}
+
+function autoSelectTeam() {
+  const name = document.getElementById('login-name').value.trim();
+  const select = document.getElementById('login-team');
+  if (TEAM_A_PLAYERS.includes(name)) select.value = 'A';
+  else if (TEAM_B_PLAYERS.includes(name)) select.value = 'B';
 }
 
 async function doLogin() {
@@ -1311,12 +1311,32 @@ function setHolesMode(mode) {
     btn.style.background = active ? 'var(--team-a-accent)' : 'var(--bg3)';
     btn.style.color = active ? '#fff' : 'var(--text)';
   });
+  // 18 Loch → Winnerod, Front/Back 9 → Lich
+  if (mode === '18') switchCourse('win');
+  else switchCourse('lich');
+  updateFormatOptions();
+}
+
+function updateFormatOptions() {
+  const isLich = activeCourse === 'lich';
+  const select = document.getElementById('new-format');
+  Array.from(select.options).forEach(opt => {
+    if (opt.classList.contains('lich-only')) {
+      opt.disabled = !isLich;
+      opt.hidden = !isLich;
+    }
+  });
+  // Falls ein Lich-only Format gewählt aber Winnerod aktiv → auf Singles wechseln
+  if (!isLich && select.value !== 'Singles') {
+    select.value = 'Singles';
+    updatePickerHints();
+  }
 }
 
 function openAdminModal() {
   buildPickers();
   updatePickerHints();
-  setHolesMode('18');
+  setHolesMode('18'); // Standard: 18 Loch = Winnerod
   document.getElementById('modal-admin').classList.add('open');
 }
 
@@ -1341,6 +1361,14 @@ function toggleChip(chip, team) {
     if (selected.length >= max) { showToast(`Max. ${max} Spieler für dieses Format`, 'error'); return; }
     chip.classList.add('selected-' + team);
   }
+}
+
+function onFormatChange() {
+  const format = document.getElementById('new-format').value;
+  if (format === 'Foursomes') setHolesMode('front9');
+  else if (format === 'Four-Ball') setHolesMode('back9');
+  else if (format === 'Singles') setHolesMode('18');
+  updatePickerHints();
 }
 
 function updatePickerHints() {
