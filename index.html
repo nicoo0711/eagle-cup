@@ -698,8 +698,7 @@
       <button id="modal-delete-link" onclick="deleteMatch(currentMatchId)" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;letter-spacing:0.04em;">Match löschen</button>
     </div>
     <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal()">Abbrechen</button>
-      <button class="btn-save" onclick="saveScores()">💾 Speichern</button>
+      <button class="btn-secondary" onclick="closeModal()">Schließen</button>
     </div>
   </div>
 </div>
@@ -1247,6 +1246,7 @@ function setHole(n, result, btn) {
     btn.classList.add('selected-'+result);
   }
   updateLiveScore();
+  saveScores();
 }
 
 function updateLiveScore() {
