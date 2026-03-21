@@ -875,6 +875,26 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('setup-info').style.display = 'block';
   }
   renderCourse();
+
+  // Auto-Login: gespeicherter User von heute?
+  const saved = localStorage.getItem('eaglecup_user');
+  if (saved) {
+    try {
+      const { name, team, date } = JSON.parse(saved);
+      const today = new Date().toISOString().slice(0, 10);
+      if (date === today && name && team) {
+        currentUser = { name, team };
+        if (isConfigured) {
+          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } else {
+          demoData = true;
+        }
+        startApp();
+        return;
+      }
+    } catch(e) {}
+    localStorage.removeItem('eaglecup_user');
+  }
 });
 
 function demoMode() {
@@ -896,6 +916,8 @@ async function doLogin() {
   if (!name || !team) { showToast('Bitte alle Felder ausfüllen', 'error'); return; }
 
   currentUser = { name, team };
+  const today = new Date().toISOString().slice(0, 10);
+  localStorage.setItem('eaglecup_user', JSON.stringify({ name, team, date: today }));
 
   if (SUPABASE_URL !== 'DEINE_SUPABASE_URL') {
     try {
