@@ -713,15 +713,18 @@
       <div class="form-group">
         <label class="form-label">Format</label>
         <select class="form-select" id="new-format" onchange="onFormatChange()">
-          <option value="Foursomes" class="lich-only">Foursomes</option>
-          <option value="Four-Ball" class="lich-only">Four-Ball</option>
+          <option value="Foursomes">Foursomes</option>
+          <option value="Four-Ball">Four-Ball</option>
           <option value="Singles">Singles</option>
         </select>
       </div>
-      <div style="display:none">
-        <button type="button" id="holes-18"></button>
-        <button type="button" id="holes-f9"></button>
-        <button type="button" id="holes-b9"></button>
+      <div class="form-group">
+        <label class="form-label">Löcher</label>
+        <div style="display:flex;gap:8px;pointer-events:none">
+          <div id="holes-18" style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--team-a-accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-align:center;">18 Loch</div>
+          <div id="holes-f9" style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-align:center;">Front 9</div>
+          <div id="holes-b9" style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-align:center;">Back 9</div>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label" style="color:var(--team-a-accent)">Team Blau – Spieler wählen</label>
@@ -1311,29 +1314,12 @@ function setHolesMode(mode) {
   // 18 Loch → Winnerod, Front/Back 9 → Lich
   if (mode === '18') switchCourse('win');
   else switchCourse('lich');
-  updateFormatOptions();
-}
-
-function updateFormatOptions() {
-  const isLich = activeCourse === 'lich';
-  const select = document.getElementById('new-format');
-  Array.from(select.options).forEach(opt => {
-    if (opt.classList.contains('lich-only')) {
-      opt.disabled = !isLich;
-      opt.hidden = !isLich;
-    }
-  });
-  // Falls ein Lich-only Format gewählt aber Winnerod aktiv → auf Singles wechseln
-  if (!isLich && select.value !== 'Singles') {
-    select.value = 'Singles';
-    updatePickerHints();
-  }
 }
 
 function openAdminModal() {
   buildPickers();
-  updatePickerHints();
-  setHolesMode('18'); // Standard: 18 Loch = Winnerod
+  document.getElementById('new-format').value = 'Singles';
+  onFormatChange();
   document.getElementById('modal-admin').classList.add('open');
 }
 
